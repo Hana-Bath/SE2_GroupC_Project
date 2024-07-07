@@ -113,10 +113,12 @@ public class NewBankClientHandler extends Thread implements INewBankClientHandle
             out.println("Enter Username");
             out.flush();
             String userName = in.readLine();
+            userName = sanitizeInput(userName);
 
             out.println("Enter Password");
             out.flush();
             String password = in.readLine();
+            password = sanitizeInput(password);
 
             customer = validateLogin(userName, password);
             customer = processLoginResult(customer);
@@ -163,10 +165,12 @@ public class NewBankClientHandler extends Thread implements INewBankClientHandle
             out.println("Please enter a valid username (6 to 15 characters, no spaces)");
             out.flush();
             String userName = in.readLine();
+            userName = sanitizeInput(userName);
 
             out.println("Please enter a valid password (9 to 15 characters, including uppercase letters, lowercase letters, and numbers, with no spaces)");
             out.flush();
             String password = in.readLine();
+            password = sanitizeInput(password);
 
             out.println("Verifying Details...");
             out.flush();
@@ -257,7 +261,9 @@ public class NewBankClientHandler extends Thread implements INewBankClientHandle
     private void updateCustomer() {
         try {
             String userNameToUpdate = promptUser("Enter customer's username to update:");
+            userNameToUpdate = sanitizeInput(userNameToUpdate);
             String newPassword = promptUser("Enter new password:");
+            newPassword = sanitizeInput(newPassword);
             customerHandler.updateCustomer(userNameToUpdate, newPassword);
         } catch (IOException e) {
             out.println("Error updating customer: " + e.getMessage());
@@ -302,5 +308,11 @@ public class NewBankClientHandler extends Thread implements INewBankClientHandle
         out.println(prompt);
         out.flush();
         return in.readLine();
+    }
+
+    private String sanitizeInput(String input) {
+        //  Allow only alphanumeric characters (ASCII chars)
+        //  Remove any potentially harmful characters from injection attacks.
+        return input.replaceAll("[^a-zA-Z0-9]", "");
     }
 }
