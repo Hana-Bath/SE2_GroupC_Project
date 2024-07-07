@@ -172,7 +172,7 @@ public class NewBankClientHandler extends Thread implements INewBankClientHandle
             out.flush();
 
             if (bank.isPasswordValid(password) && bank.isUserNameValid(userName)) {
-                customer = bank.registerCustomer(userName, password);
+                customer = bank.registerCustomer(userName, UserAuthentication.hashPassword(password));
                 out.println("Registration successful. You can now log in.");
                 out.flush();
                 validDetails = true;

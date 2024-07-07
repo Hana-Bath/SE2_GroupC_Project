@@ -92,7 +92,7 @@ public class NewBank implements INewBank {
         if (customers.containsKey(userName)) {
             Customer customer = customers.get(userName);
             // Check password
-            if (customer.getPassword().equals(password)) {
+            if (UserAuthentication.checkPassword(password, customer.getPassword())) {
                 return customer;
             }
         }
