@@ -25,9 +25,23 @@ public class ExampleClient extends Thread {
 
 			public void run() {
 				try {
-					String response;
-					while (running && (response = bankServerIn.readLine()) != null) {
-						System.out.println(response);
+					while (running) {
+						String command = userInput.readLine();
+						if (command.equalsIgnoreCase("LOGOUT")) {
+							bankServerOut.println(command);
+							running = false;
+							break;
+						} else if (command.equalsIgnoreCase("DELETE_ACCOUNT")) {
+							System.out.println("Are you sure you want to delete your account? This action cannot be undone. Type 'CONFIRM' to proceed.");
+							String confirmation = userInput.readLine();
+							if (confirmation.equalsIgnoreCase("CONFIRM")) {
+								bankServerOut.println("DELETE_ACCOUNT");
+							} else {
+								System.out.println("Account deletion canceled.");
+							}
+						} else {
+							bankServerOut.println(command);
+						}
 					}
 				} catch (IOException e) {
 					if (running) {

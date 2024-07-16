@@ -12,4 +12,6 @@ public interface INewBank {
     boolean deleteCustomer(String userName);
     Customer readCustomer(String userName);
     List<Customer> getAllCustomers();
+    boolean deactivateCustomer(String userName);
+    boolean deleteCustomerPermanently(String userName);
 }

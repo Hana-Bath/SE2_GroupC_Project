@@ -46,6 +46,8 @@ public class NewBankClientHandler extends Thread implements INewBankClientHandle
 
         userCommands = new HashMap<>();
         userCommands.put("LOGOUT", this::logout);
+        userCommands.put("DEACTIVATE", this::deactivateAccount);
+        userCommands.put("DELETE_ACCOUNT", () -> processRequest("DELETE_ACCOUNT", out));
     }
 
     @Override
@@ -150,7 +152,11 @@ public class NewBankClientHandler extends Thread implements INewBankClientHandle
             out.println("Please type LOGIN if you already have an account, or REGISTER if you need to create one.");
             out.flush();
         } else {
-            out.println("Log In Successful. What do you want to do?");
+            if (customer.isDeactivated()) {
+                out.println("Log In Successful. Note: Your account is currently deactivated. You can reactivate it by contacting support.");
+            } else {
+                out.println("Log In Successful. What do you want to do?");
+            }
             out.flush();
         }
         return customer;
@@ -198,6 +204,13 @@ public class NewBankClientHandler extends Thread implements INewBankClientHandle
     private void processUserCommands(Customer customer) throws IOException {
         if (customer != null) {
             out.println("LOGOUT - logout");
+            out.flush();
+            if (customer.isDeactivated()) {
+                out.println("Your account is deactivated. Some features may be restricted.");
+                out.flush();
+            }
+
+            out.println("Available commands: LOGOUT, DEACTIVATE");
             out.flush();
 
             while (true) {
@@ -273,6 +286,7 @@ public class NewBankClientHandler extends Thread implements INewBankClientHandle
     private void deleteCustomer() {
         try {
             customerHandler.deleteCustomer();
+
         } catch (IOException e) {
             out.println("Error deleting customer: " + e.getMessage());
         }
@@ -301,6 +315,46 @@ public class NewBankClientHandler extends Thread implements INewBankClientHandle
             Thread.sleep(100); // Small delay to ensure message is sent
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
+        }
+    }
+
+    private void deactivateAccount() {
+        Customer customer = bank.readCustomer("user8"); // Replace with the correct method to get the logged-in customer
+        if (customer != null) {
+            boolean success = bank.deactivateCustomer(customer.getKey());
+            if (success) {
+                out.println("Your account has been deactivated successfully.");
+            } else {
+                out.println("Failed to deactivate your account. Please try again.");
+            }
+        } else {
+            out.println("You are not logged in.");
+        }
+        out.flush();
+    }
+
+
+    private void processRequest(String request, PrintWriter out) {
+        try {
+            if (request.equalsIgnoreCase("DELETE_ACCOUNT")) {
+                out.println("Are you sure you want to delete your account? This action cannot be undone. Type 'CONFIRM' to proceed.");
+                String confirmation = in.readLine();
+                if (confirmation.equalsIgnoreCase("CONFIRM")) {
+                    out.println("Enter your username to confirm deletion:");
+                    String userName = in.readLine();
+                    boolean success = customerHandler.deleteAccount(userName);
+                    if (success) {
+                        out.println("Your account has been successfully deleted.");
+                    } else {
+                        out.println("Failed to delete your account. Please try again.");
+                    }
+                } else {
+                    out.println("Account deletion canceled.");
+                }
+            } else {
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

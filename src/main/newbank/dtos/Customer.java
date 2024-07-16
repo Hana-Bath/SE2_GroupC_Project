@@ -15,10 +15,11 @@ public class Customer implements ICustomer {
     private String accountCreationDate;
     private int loyaltyPoints;
     private String preferredContactMethod;
+    private boolean isDeactivated;
 
     public Customer(String key, String password, boolean isAdmin, String firstName, String lastName, String emailAddress,
                     String phoneNumber, String address, String dateOfBirth, String accountCreationDate, int loyaltyPoints,
-                    String preferredContactMethod) {
+                    String preferredContactMethod,boolean isDeactivated) {
         this.key = key;
         this.password = password;
         this.isAdmin = isAdmin;
@@ -31,6 +32,7 @@ public class Customer implements ICustomer {
         this.accountCreationDate = accountCreationDate;
         this.loyaltyPoints = loyaltyPoints;
         this.preferredContactMethod = preferredContactMethod;
+        this.isDeactivated = isDeactivated;
     }
 
     @Override
@@ -96,5 +98,16 @@ public class Customer implements ICustomer {
     @Override
     public String getPreferredContactMethod() {
         return preferredContactMethod;
+    }
+
+
+    @Override
+    public boolean isDeactivated() {
+        return isDeactivated;
+    }
+
+    @Override
+    public void setDeactivated(boolean deactivated) {
+        isDeactivated = deactivated;
     }
 }

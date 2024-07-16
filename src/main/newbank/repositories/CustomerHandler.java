@@ -60,6 +60,12 @@ public class CustomerHandler implements ICustomerHandler {
     }
 
     @Override
+    public boolean deleteAccount(String userName) throws IOException {
+        return bank.deleteCustomerPermanently(userName);
+    }
+
+
+    @Override
     public void readCustomer() throws IOException {
         String userName = promptUser.promptUser(out, "Enter customer's username to read:");
         Customer customer = bank.readCustomer(userName);

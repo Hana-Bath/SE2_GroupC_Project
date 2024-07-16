@@ -1,5 +1,7 @@
 package newbank.IRepositories;
 
+import java.io.IOException;
+
 public interface ICustomer {
     String getPassword();
     void setPassword(String password);
@@ -14,4 +16,6 @@ public interface ICustomer {
     int getLoyaltyPoints();
     String getPreferredContactMethod();
     boolean isAdmin(); // Include this method
+    boolean isDeactivated();
+    void setDeactivated(boolean deactivated);
 }
